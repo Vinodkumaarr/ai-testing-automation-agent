@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 import Provider from './provider';
 
 export const metadata: Metadata = {
-  title: "Next.js Premium Startup Boilerplate",
+  title: "AI Testing Automation app",
   description: "Created using the ultimate interactive Next.js stack generator CLI.",
 };
 
