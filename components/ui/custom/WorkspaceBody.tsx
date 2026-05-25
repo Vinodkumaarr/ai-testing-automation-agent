@@ -48,18 +48,19 @@
 // export default WorkspaceBody;
 
 "use client";
-
 import { UserDetailContext } from "@/context/UserDetailContext";
-import Image from "next/image";
-import React, { useContext } from "react";
-import { Button } from "../button";
-import { Card, CardContent } from "../card";
 import {
+  ArrowRight,
   Github,
   Sparkles,
-  ArrowRight,
 } from "lucide-react";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import React, { useContext, useEffect, useState } from "react";
+import { Button } from "../button";
+import { CardContent } from "../card";
 
+import axios from "axios";
 import {
   motion,
   useMotionTemplate,
@@ -135,8 +136,25 @@ function GlowCard({
 ========================= */
 
 function WorkspaceBody() {
-  const { userDetail } =
-    useContext(UserDetailContext);
+
+
+  const { userDetail } = useContext(UserDetailContext);
+  const router = useRouter();
+  const [token,setToken] = useState('')
+
+  useEffect(()=>{
+    GetGithubUserToken();
+  },[])
+
+  const GetGithubUserToken= async ()=>{
+    const result = await axios.get("/api/github/token");
+    console.log(result.data.token);
+    setToken(result.data.token);
+  }
+  
+  const OauthRepo=async ()=>{
+    router.push("/api/github")
+  }
 
   return (
     <div className="space-y-6">
@@ -219,13 +237,15 @@ function WorkspaceBody() {
           </div>
 
           {/* Button */}
-          <Button className="group rounded-2xl border border-indigo-400/20 bg-gradient-to-r from-indigo-600 to-violet-700 px-7 py-6 text-white shadow-lg shadow-indigo-500/20 transition-all duration-300 hover:scale-105 hover:shadow-indigo-500/40">
+          {!token ? <Button onClick={OauthRepo} className="group rounded-2xl border border-indigo-400/20 bg-gradient-to-r from-indigo-600 to-violet-700 px-7 py-6 text-white shadow-lg shadow-indigo-500/20 transition-all duration-300 hover:scale-105 hover:shadow-indigo-500/40">
             <span className="flex items-center gap-2">
-              Install Now
+              Setup
 
               <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
             </span>
           </Button>
+             : <Button  className="group rounded-2xl border border-indigo-400/20 bg-gradient-to-r from-indigo-600 to-violet-700 px-7 py-6 text-white shadow-lg shadow-indigo-500/20 transition-all duration-300 hover:scale-105 hover:shadow-indigo-500/40"> + Add Repo</Button>
+          }
         </div>
       </GlowCard>
 
