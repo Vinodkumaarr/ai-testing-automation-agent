@@ -1,51 +1,3 @@
-// "use client";
-
-// import { UserDetailContext } from "@/context/UserDetailContext";
-// import Image from "next/image";
-// import React, { useContext } from "react";
-// import { Button } from "../button";
-// import { Card } from "../card";
-
-
-// function WorkspaceBody() {
-//   const { userDetail } = useContext(UserDetailContext);
-
-//   return (
-//     <>
-      
-//       {/* Left Section */}
-//       <div className='flex justify-between items-center'>
-//         <h2 className="text-4xl font-semibold text-gray-800">
-//           Workspace
-//         </h2>
-//         <h2 className="rounded-lg bg-blue-100 px-4 py-2 text-sm font-medium text-blue-800">
-//           Remaining Credits: {userDetail?.credits ?? 0}
-//         </h2>
-//       </div>
-        
-//     <div>
-//       {/* Right Section */}
-//       <Card className="mt-5 flex items-center gap-4">
-        
-//         <div className="flex items-center gap-5 transition hover:shadow-md">
-//           <Image
-//             src="/github.png"
-//             alt="GitHub"
-//             width={40}
-//             height={40}
-//             className="object-contain"
-//           />
-//           <h2>Connect GitHub & Add Repository</h2>
-//         </div>
-//         <div>
-//             <Button>Install</Button>
-//         </div>
-//       </Card>
-//     </div>
-//   );
-// }
-
-// export default WorkspaceBody;
 
 "use client";
 import { UserDetailContext } from "@/context/UserDetailContext";
@@ -67,6 +19,7 @@ import {
   useMotionValue,
 } from "framer-motion";
 import EmptyWorkspace from "./EmptyWorkspace";
+import RepoDialog from "./RepoDialog";
 
 /* =========================
    Interactive Card
@@ -152,7 +105,7 @@ function WorkspaceBody() {
     setToken(result.data.token);
   }
   
-  const OauthRepo=async ()=>{
+  const OnAddrepo=async ()=>{
     router.push("/api/github")
   }
 
@@ -237,14 +190,14 @@ function WorkspaceBody() {
           </div>
 
           {/* Button */}
-          {!token ? <Button onClick={OauthRepo} className="group rounded-2xl border border-indigo-400/20 bg-gradient-to-r from-indigo-600 to-violet-700 px-7 py-6 text-white shadow-lg shadow-indigo-500/20 transition-all duration-300 hover:scale-105 hover:shadow-indigo-500/40">
+          {!token ? <Button onClick={OnAddrepo} className="group rounded-2xl border border-indigo-400/20 bg-gradient-to-r from-indigo-600 to-violet-700 px-7 py-6 text-white shadow-lg shadow-indigo-500/20 transition-all duration-300 hover:scale-105 hover:shadow-indigo-500/40">
             <span className="flex items-center gap-2">
               Setup
 
               <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
             </span>
           </Button>
-             : <Button  className="group rounded-2xl border border-indigo-400/20 bg-gradient-to-r from-indigo-600 to-violet-700 px-7 py-6 text-white shadow-lg shadow-indigo-500/20 transition-all duration-300 hover:scale-105 hover:shadow-indigo-500/40"> + Add Repo</Button>
+             : <RepoDialog />
           }
         </div>
       </GlowCard>

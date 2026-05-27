@@ -1,6 +1,6 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(req:NextResponse){
+export async function GET(req:NextRequest){
     const code = req.nextUrl.searchParams.get("code");
     
     if (!code){
@@ -20,8 +20,8 @@ export async function GET(req:NextResponse){
         }),
     });
     const data = await res.json();
-    const accessToken = data.access_token;
-    if (!accessToken){
+    const token = data.access_token;
+    if (!token){
         return NextResponse.redirect(new URL('/workspace?error=token-exchange-failed',req.url))
 
     }
@@ -29,7 +29,7 @@ export async function GET(req:NextResponse){
 
     // store token in http-only cookie
 
-    response.cookies.set('gh_token', accessToken, {
+    response.cookies.set('gh_token', token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         maxAge: 60*60*24*30, // 30 days)
