@@ -121,9 +121,17 @@
 // };
 
 
+
 "use client";
 
-import { UserButton } from "@clerk/nextjs";
+import {
+  SignInButton,
+  UserButton,
+  useUser,
+} from "@clerk/nextjs";
+
+import { useRouter } from "next/navigation";
+
 import {
   ArrowRight,
   Bot,
@@ -147,11 +155,11 @@ function SpotlightCard({ children }) {
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
 
-   function handleMouseMove({
+  function handleMouseMove({
     currentTarget,
     clientX,
     clientY,
-  }){
+  }) {
     const rect = currentTarget.getBoundingClientRect();
 
     mouseX.set(clientX - rect.left);
@@ -161,7 +169,13 @@ function SpotlightCard({ children }) {
   return (
     <motion.div
       onMouseMove={handleMouseMove}
-      className="group relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 backdrop-blur-2xl p-8 transition-all duration-500 hover:-translate-y-2 hover:scale-[1.02] hover:border-cyan-400/40 hover:shadow-2xl hover:shadow-cyan-500/20"
+      whileHover={{
+        rotateX: 3,
+        rotateY: -3,
+        scale: 1.02,
+      }}
+      transition={{ type: "spring", stiffness: 300 }}
+      className="group relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 p-8 backdrop-blur-2xl transition-all duration-500 hover:-translate-y-2 hover:border-cyan-400/40 hover:shadow-2xl hover:shadow-cyan-500/20"
     >
       {/* Cursor Spotlight */}
       <motion.div
@@ -178,38 +192,41 @@ function SpotlightCard({ children }) {
       />
 
       {/* Glow Border */}
-      <div className="absolute inset-0 rounded-3xl border border-transparent group-hover:border-cyan-400/30 transition duration-500" />
+      <div className="absolute inset-0 rounded-3xl border border-transparent transition duration-500 group-hover:border-cyan-400/30" />
 
-      {/* Card Content */}
+      {/* Content */}
       <div className="relative z-10">{children}</div>
     </motion.div>
   );
 }
 
 /* =========================
-   Main Page
+   Main Component
 ========================= */
 
 export default function Home() {
+  const router = useRouter();
+  const { isSignedIn } = useUser();
+
   return (
     <main className="relative min-h-screen overflow-hidden bg-black text-white selection:bg-cyan-500/30">
       {/* Background Glow */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-[-120px] left-[-100px] h-[350px] w-[350px] rounded-full bg-cyan-500/30 blur-3xl animate-pulse" />
+        <div className="absolute left-[-100px] top-[-120px] h-[350px] w-[350px] animate-pulse rounded-full bg-cyan-500/30 blur-3xl" />
 
-        <div className="absolute bottom-[-120px] right-[-100px] h-[350px] w-[350px] rounded-full bg-violet-600/30 blur-3xl animate-pulse" />
+        <div className="absolute bottom-[-120px] right-[-100px] h-[350px] w-[350px] animate-pulse rounded-full bg-violet-600/30 blur-3xl" />
 
-        <div className="absolute top-[40%] left-[45%] h-[250px] w-[250px] rounded-full bg-pink-500/20 blur-3xl animate-bounce" />
+        <div className="absolute left-[45%] top-[40%] h-[250px] w-[250px] animate-bounce rounded-full bg-pink-500/20 blur-3xl" />
       </div>
 
       {/* Navbar */}
-      <nav className="relative z-20 flex items-center justify-between px-6 md:px-16 py-6 border-b border-white/10 bg-white/5 backdrop-blur-xl">
-        <h1 className="text-3xl font-black tracking-wide bg-gradient-to-r from-cyan-400 via-violet-400 to-pink-500 bg-clip-text text-transparent">
+      <nav className="relative z-20 flex items-center justify-between border-b border-white/10 bg-white/5 px-6 py-6 backdrop-blur-xl md:px-16">
+        <h1 className="bg-gradient-to-r from-cyan-400 via-violet-400 to-pink-500 bg-clip-text text-3xl font-black tracking-wide text-transparent">
           AI Testing Agent
         </h1>
 
         <div className="flex items-center gap-5">
-          <button className="hidden md:flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-5 py-2 transition-all duration-300 hover:scale-105 hover:bg-white/10">
+          <button className="hidden items-center gap-2 rounded-full border border-white/10 bg-white/5 px-5 py-2 transition-all duration-300 hover:scale-105 hover:bg-white/10 md:flex">
             <Sparkles className="h-4 w-4 text-cyan-400" />
             Features
           </button>
@@ -246,15 +263,32 @@ export default function Home() {
               with intelligent automation.
             </p>
 
+            {/* Buttons */}
             <div className="mt-10 flex flex-wrap gap-5">
-              <button className="group relative overflow-hidden rounded-2xl bg-gradient-to-r from-cyan-500 to-violet-600 px-8 py-4 font-semibold transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-cyan-500/30">
-                <span className="relative z-10 flex items-center gap-2">
-                  Get Started
-                  <ArrowRight className="h-5 w-5 transition group-hover:translate-x-1" />
-                </span>
+              {!isSignedIn ? (
+                <SignInButton mode="modal">
+                  <button className="group relative overflow-hidden rounded-2xl bg-gradient-to-r from-cyan-500 to-violet-600 px-8 py-4 font-semibold transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-cyan-500/30">
+                    <span className="relative z-10 flex items-center gap-2">
+                      Get Started
+                      <ArrowRight className="h-5 w-5 transition group-hover:translate-x-1" />
+                    </span>
 
-                <div className="absolute inset-0 bg-white/10 opacity-0 transition duration-300 group-hover:opacity-100" />
-              </button>
+                    <div className="absolute inset-0 bg-white/10 opacity-0 transition duration-300 group-hover:opacity-100" />
+                  </button>
+                </SignInButton>
+              ) : (
+                <button
+                  onClick={() => router.push("/workspace")}
+                  className="group relative overflow-hidden rounded-2xl bg-gradient-to-r from-cyan-500 to-violet-600 px-8 py-4 font-semibold transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-cyan-500/30"
+                >
+                  <span className="relative z-10 flex items-center gap-2">
+                    Go to Workspace
+                    <ArrowRight className="h-5 w-5 transition group-hover:translate-x-1" />
+                  </span>
+
+                  <div className="absolute inset-0 bg-white/10 opacity-0 transition duration-300 group-hover:opacity-100" />
+                </button>
+              )}
 
               <button className="rounded-2xl border border-white/10 bg-white/5 px-8 py-4 backdrop-blur-xl transition-all duration-300 hover:scale-105 hover:bg-white/10">
                 Live Demo

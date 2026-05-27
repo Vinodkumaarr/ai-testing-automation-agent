@@ -105,7 +105,7 @@ function WorkspaceBody() {
     setToken(result.data.token);
   }
   
-  const OnAddrepo=async ()=>{
+  const OnAddRepo=async ()=>{
     router.push("/api/github")
   }
 
@@ -190,7 +190,7 @@ function WorkspaceBody() {
           </div>
 
           {/* Button */}
-          {!token ? <Button onClick={OnAddrepo} className="group rounded-2xl border border-indigo-400/20 bg-gradient-to-r from-indigo-600 to-violet-700 px-7 py-6 text-white shadow-lg shadow-indigo-500/20 transition-all duration-300 hover:scale-105 hover:shadow-indigo-500/40">
+          {!token ? <Button onClick={OnAddRepo} className="group rounded-2xl border border-indigo-400/20 bg-gradient-to-r from-indigo-600 to-violet-700 px-7 py-6 text-white shadow-lg shadow-indigo-500/20 transition-all duration-300 hover:scale-105 hover:shadow-indigo-500/40">
             <span className="flex items-center gap-2">
               Setup
 
