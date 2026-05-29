@@ -20,6 +20,7 @@ import {
 } from "framer-motion";
 import EmptyWorkspace from "./EmptyWorkspace";
 import RepoDialog from "./RepoDialog";
+import UserRepoList from "./UserRepoList";
 
 /* =========================
    Interactive Card
@@ -88,16 +89,39 @@ function GlowCard({
    Main Component
 ========================= */
 
+export type UserRepo = {
+  id: number;
+  repoId: number;
+  name: string;
+  fullName: string;
+  private: boolean;
+  htmlUrl: string;
+  description: string;
+  userId: number;
+  owner: string;
+  updatedAt:string,
+  language:string,
+  defaultBranch: string;
+}
+
 function WorkspaceBody() {
 
 
   const { userDetail } = useContext(UserDetailContext);
   const router = useRouter();
   const [token,setToken] = useState('')
+  const [userRepoList,setUserRepoList] = useState<UserRepo[]>([]);
+  
+
 
   useEffect(()=>{
     GetGithubUserToken();
+    
   },[])
+
+  useEffect(()=>{
+    userDetail && GetUserAddRepoList();
+  },[ userDetail])
 
   const GetGithubUserToken= async ()=>{
     const result = await axios.get("/api/github/token");
@@ -107,6 +131,12 @@ function WorkspaceBody() {
   
   const OnAddRepo=async ()=>{
     router.push("/api/github")
+  }
+
+  const GetUserAddRepoList = async () =>{
+    const result = await axios.get("/api/user-repo?userId="+userDetail?.id);
+    console.log("User Added Repo List:",result.data);
+    setUserRepoList(result.data);
   }
 
   return (
@@ -197,14 +227,16 @@ function WorkspaceBody() {
               <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
             </span>
           </Button>
-             : <RepoDialog />
+             : <RepoDialog setRefreshPage={(refresh:boolean)=>GetUserAddRepoList()} />
+             
           }
         </div>
       </GlowCard>
 
       <GlowCard className="p-6">
         <CardContent>
-            <EmptyWorkspace />
+            {!userRepoList ? <EmptyWorkspace />
+               : <UserRepoList repoList={userRepoList} /> }
         </CardContent>
       </GlowCard>
 
