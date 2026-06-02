@@ -1,8 +1,9 @@
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Play, RefreshCw, SettingsIcon } from "lucide-react";
+import { Play, RefreshCw } from "lucide-react";
 import { useState } from "react";
 import { Button } from "../button";
+import TestCaseSettingDialog from "./TestCaseSettingDialog";
 import { TestCase } from "./UserRepoList";
 
 type Props = {
@@ -25,42 +26,7 @@ function TestCaseList({ testCases, onReload }: Props) {
       );
     }
   };
-  //   return (
-  //     <div>
-  //         <div className='flex items-center justify-between '>
-  //              <h2 className='text-medium'>Generated Test Cases</h2>
-  //              <Button size={'sm'} onClick={()=>onReload(testCases[0]?.repoId)}><RefreshCw className='h-4 w-4 mr-2' /> Refresh</Button>
-  //         </div>
-  //         <div className='border rounded-md mt-4'>
-  //             {testCases.map((testCase,index) =>(
-  //                 <div key={index} className='p-4 border-b flex items-center justify-between'>
-  //                     <div className='flex items-center gap-2 rounded-lg border border-violet-400/20 bg-gradient-to-r from-indigo-500/10 via-violet-500/10 to-cyan-500/10 p-4 backdrop-blur-xl'>
-  //                        <Checkbox
-  //                         checked={selectedTestCases?.some((item:any) => item.id ==testCase?.id)}
-  //                         onCheckedChange={(checked)=>handleSelectedTestCase(checked,testCase)}/>
-  //                        <div>
-  //                             <h2>{testCase.title}</h2>
-  //                             <p className='text-xs text-gray-500'>{testCase.description}</p>
-  //                        </div>
-  //                     </div>
-  //                     <div className='flex gap-4'>
-  //                         <Badge variant={'secondary'}>{testCase?.type}</Badge>
-  //                         <Badge variant={'secondary'}>Pending</Badge>
-  //                         <Button size={'icon'} variant={'outline'}>
-  //                             <SettingsIcon className='h-4 w-4' />
-  //                         </Button>
-
-  //                     </div>
-  //                 </div>
-
-  //             ))}
-  //             <div className='p-4 flex items-center justify-between bg-gray-100'>
-  //                 <h2>Run Selected Test Case</h2>
-  //                 <Button disabled={selectedTestCases?.length == 0}><Play className='h-4 w-4 mr-2' /> Run Selected</Button>
-  //             </div>
-  //         </div>
-  //     </div>
-  //   )
+  
   return (
     <div className="space-y-5">
       {/* Header */}
@@ -115,14 +81,7 @@ function TestCaseList({ testCases, onReload }: Props) {
               <Badge className="border border-amber-400/20 bg-amber-500/10 text-amber-300 hover:bg-amber-500/20">
                 Pending
               </Badge>
-
-              <Button
-                size={"icon"}
-                variant={"outline"}
-                className="border-indigo-400/20 bg-white/5 text-indigo-300 hover:bg-indigo-500/10 hover:text-white"
-              >
-                <SettingsIcon className="h-4 w-4" />
-              </Button>
+              <TestCaseSettingDialog testCase={testCase} setReload={onReload} />
               </div>
             </div>
           </div>
