@@ -102,6 +102,8 @@ export type UserRepo = {
   updatedAt:string,
   language:string,
   defaultBranch: string;
+  targetDomain?:string,
+  globalInstruction?:string,
 }
 
 function WorkspaceBody() {
@@ -236,7 +238,7 @@ function WorkspaceBody() {
       <GlowCard className="p-6">
         <CardContent>
             {!userRepoList ? <EmptyWorkspace />
-               : <UserRepoList repoList={userRepoList} /> }
+               : <UserRepoList repoList={userRepoList} setReload={() => GetUserAddRepoList()} /> }
         </CardContent>
       </GlowCard>
 

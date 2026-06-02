@@ -22,7 +22,9 @@ export const repositories = pgTable("repositories", {
     description:text("description"),
     owner:text("owner").notNull(),
     defaultBranch:text("default_branch"),
-    language:text("language")
+    language:text("language"),
+    targetDomain:varchar("target_domain").default('http://localhost:3000'),
+    globalInstruction:text("global_instruction"),
 })
 
 export const posts = pgTable("posts", {

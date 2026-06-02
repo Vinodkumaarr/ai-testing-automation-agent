@@ -7,7 +7,6 @@
 // import Image from "next/image";
 // import { UserRepo } from './WorkspaceBody';
 
-
 // type props = {
 //     repoList:UserRepo[]
 
@@ -69,7 +68,7 @@
 //     const passRate = totalTests > 0
 //         ? Math.round((passedTests / totalTests) * 100)
 //         : 0;
-        
+
 //         const {userDetail} = useContext(UserDetailContext);
 //     const [loading,setLoading] = useState(false);
 
@@ -86,9 +85,8 @@
 //       console.log(result.data);
 //       setLoading(false);
 
-
 //     }
-        
+
 //   return (
 //     <div className="space-y-4">
 //       <h2 className='my-3 font-medium'>REPOSITORIES</h2>
@@ -210,7 +208,6 @@
 //     </div>
 //   );
 // }
-
 
 // "use client";
 
@@ -433,21 +430,25 @@ import {
   CheckCircle2,
   Code2,
   GitBranch,
+  Link2Icon,
   ListChecks,
   Loader2,
   Loader2Icon,
   Sparkles,
   TrendingUp,
-  XCircle,
+  XCircle
 } from "lucide-react";
 import Image from "next/image";
 import { useContext, useState } from "react";
 import { Button } from "../button";
+import RepoSettings from "./RepoSettings";
 import TestCaseList from "./TestCaseList";
 import { UserRepo } from "./WorkspaceBody";
 
 type Props = {
-  repoList: UserRepo[];
+  repoList: UserRepo[],
+  setReload: () => void;
+
 };
 
 export type TestCase = {
@@ -461,29 +462,28 @@ export type TestCase = {
   repoName: string;
   repoOwner: string;
   targetRoute: string;
-}
+};
 
 type StatusData = {
   totalTests: number;
   passedTests: number;
   failedTests: number;
   passRate: number;
-}
+};
 
-function UserRepoList({ repoList }: Props) {
+function UserRepoList({ repoList, setReload }: Props) {
   const { userDetail } = useContext(UserDetailContext);
   const [testCaseLoading, setTestCaseLoading] = useState(false);
   const [loadingRepoId, setLoadingRepoId] = useState<number | null>(null);
-  const [testCases,setTestCases] = useState<TestCase[]>([]);
+  const [testCases, setTestCases] = useState<TestCase[]>([]);
   
-  const [statusData,setStatusData] = useState<StatusData>({
-    totalTests:0,
-    passedTests:0,
-    failedTests:0,
-    passRate:0
-  });
 
-  
+  const [statusData, setStatusData] = useState<StatusData>({
+    totalTests: 0,
+    passedTests: 0,
+    failedTests: 0,
+    passRate: 0,
+  });
 
   const handleGenerateTestCase = async (repo: UserRepo) => {
     try {
@@ -499,38 +499,35 @@ function UserRepoList({ repoList }: Props) {
 
       console.log("Sending Payload:", payload);
 
-      const result = await axios.post(
-        "/api/generate-test-cases",
-        payload
-      );
+      const result = await axios.post("/api/generate-test-cases", payload);
 
       console.log("Generated Test Cases:", result.data);
     } catch (error: any) {
       console.error(
         "Generate Test Case Error:",
-        error?.response?.data || error.message
+        error?.response?.data || error.message,
       );
     } finally {
       setLoadingRepoId(null);
     }
   };
 
-  const GetTestCases = async(repoId: number)=>{
+  const GetTestCases = async (repoId: number) => {
     setTestCaseLoading(true);
     setTestCases([]);
     const result = await axios.get(`/api/test-cases?repoId=${repoId}`);
     console.log(result.data);
 
     setStatusData({
-      totalTests:result.data.length,
-      passedTests:0,
-      failedTests:0,
-      passRate:0
-    })
+      totalTests: result.data.length,
+      passedTests: 0,
+      failedTests: 0,
+      passRate: 0,
+    });
 
     setTestCases(result.data);
     setTestCaseLoading(false);
-  }
+  };
 
   return (
     <div className="space-y-5">
@@ -546,16 +543,15 @@ function UserRepoList({ repoList }: Props) {
       </div>
 
       <Accordion
-          type="single"
-          collapsible 
-          onValueChange={(value) =>GetTestCases(Number(value))}
-          className="group overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-[#0B1120] via-[#111827] to-[#050816] shadow-xl backdrop-blur-2xl transition-all duration-500 hover:border-indigo-400/30 hover:shadow-indigo-500/20"
-        >
-      {repoList.map((repo,index) => (
-        
+        type="single"
+        collapsible
+        onValueChange={(value) => GetTestCases(Number(value))}
+        className="group overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-[#0B1120] via-[#111827] to-[#050816] shadow-xl backdrop-blur-2xl transition-all duration-500 hover:border-indigo-400/30 hover:shadow-indigo-500/20"
+      >
+        {repoList.map((repo, index) => (
           <AccordionItem
-             key={repo.id}
-            value={(repo.repoId).toString()}
+            key={repo.id}
+            value={repo.repoId.toString()}
             className="border px-5"
           >
             <AccordionTrigger className="px-6 py-5 hover:no-underline">
@@ -603,6 +599,17 @@ function UserRepoList({ repoList }: Props) {
 
             <AccordionContent className="px-6 pb-6">
               <div className="space-y-6">
+                <div className="bg--gray-50 p-3 border rounded-xl flex justify-between items-center">
+                  <div className="flex items-center gap-2 ">
+                    <Link2Icon className="text-primary" />
+                    <h2>Target Domain:</h2>
+                    <h2 className=" p-1 px-2 border border-md">
+                      {repo?.targetDomain}
+                    </h2>
+        </div>
+        <RepoSettings repo = {repo} setReload={setReload}/>
+      </div>
+
                 {/* Stats */}
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                   <StatusCard
@@ -617,9 +624,7 @@ function UserRepoList({ repoList }: Props) {
                   <StatusCard
                     title="Passed"
                     value={statusData.passedTests}
-                    icon={
-                      <CheckCircle2 className="h-5 w-5 text-emerald-400" />
-                    }
+                    icon={<CheckCircle2 className="h-5 w-5 text-emerald-400" />}
                     glow="shadow-emerald-500/20"
                     bg="bg-emerald-500/10"
                     border="border-emerald-400/20"
@@ -643,58 +648,58 @@ function UserRepoList({ repoList }: Props) {
                     border="border-violet-400/20"
                   />
                 </div>
-                {!testCaseLoading && testCases.length > 0 &&
-                <TestCaseList testCases={testCases} onReload={(repoId:number)=>GetTestCases(repoId)}/>}
+                {!testCaseLoading && testCases.length > 0 && (
+                  <TestCaseList
+                    testCases={testCases}
+                    onReload={(repoId: number) => GetTestCases(repoId)}
+                  />
+                )}
 
-                
                 {testCaseLoading ? (
-                <h2 className="flex items-center gap-3">
-                  <Loader2Icon className="animate-spin" />
-                     Please Wait...
-                </h2>
-  ) : (
-    testCases?.length == 0 && 
-    <div className="relative overflow-hidden rounded-3xl border border-indigo-400/20 bg-gradient-to-r from-indigo-500/10 via-violet-500/10 to-cyan-500/10 p-5 backdrop-blur-xl">
-      
-      <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/5 via-violet-500/5 to-cyan-500/5 opacity-60 blur-2xl" />
+                  <h2 className="flex items-center gap-3">
+                    <Loader2Icon className="animate-spin" />
+                    Please Wait...
+                  </h2>
+                ) : (
+                  testCases?.length == 0 && (
+                    <div className="relative overflow-hidden rounded-3xl border border-indigo-400/20 bg-gradient-to-r from-indigo-500/10 via-violet-500/10 to-cyan-500/10 p-5 backdrop-blur-xl">
+                      <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/5 via-violet-500/5 to-cyan-500/5 opacity-60 blur-2xl" />
 
-      <div className="relative z-10 flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
-        <div>
-          <h3 className="text-lg font-semibold text-white">
-            {loadingRepoId === repo.id
-              ? "Generating Test Cases..."
-              : "Generate AI Test Cases"}
-          </h3>
+                      <div className="relative z-10 flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+                        <div>
+                          <h3 className="text-lg font-semibold text-white">
+                            {loadingRepoId === repo.id
+                              ? "Generating Test Cases..."
+                              : "Generate AI Test Cases"}
+                          </h3>
 
-          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-gray-400">
-            Analyze this repository using AI and generate intelligent
-            automated test cases, bug detection flows, API validations,
-            and UI regression tests.
-          </p>
-        </div>
+                          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-gray-400">
+                            Analyze this repository using AI and generate
+                            intelligent automated test cases, bug detection
+                            flows, API validations, and UI regression tests.
+                          </p>
+                        </div>
 
-        <Button
-          className="group h-12 rounded-2xl border border-indigo-400/20 bg-gradient-to-r from-indigo-600 via-violet-600 to-cyan-600 px-6 text-white shadow-lg shadow-indigo-500/20 transition-all duration-300 hover:scale-105 hover:shadow-indigo-500/40"
-          disabled={loadingRepoId === repo.id}
-          onClick={() => handleGenerateTestCase(repo)}
-        >
-          {loadingRepoId === repo.id ? (
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-          ) : (
-            <Sparkles className="mr-2 h-4 w-4 transition-transform duration-300 group-hover:rotate-12" />
-          )}
-
-          Generate Test Cases
-        </Button>
-      </div>
-    </div>
-  )
-}
+                        <Button
+                          className="group h-12 rounded-2xl border border-indigo-400/20 bg-gradient-to-r from-indigo-600 via-violet-600 to-cyan-600 px-6 text-white shadow-lg shadow-indigo-500/20 transition-all duration-300 hover:scale-105 hover:shadow-indigo-500/40"
+                          disabled={loadingRepoId === repo.id}
+                          onClick={() => handleGenerateTestCase(repo)}
+                        >
+                          {loadingRepoId === repo.id ? (
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          ) : (
+                            <Sparkles className="mr-2 h-4 w-4 transition-transform duration-300 group-hover:rotate-12" />
+                          )}
+                          Generate Test Cases
+                        </Button>
+                      </div>
+                    </div>
+                  )
+                )}
               </div>
             </AccordionContent>
           </AccordionItem>
-        
-      ))}
+        ))}
       </Accordion>
     </div>
   );
@@ -729,9 +734,7 @@ function StatusCard({
         <div>
           <p className="text-sm text-gray-400">{title}</p>
 
-          <h3 className="mt-2 text-3xl font-bold text-white">
-            {value}
-          </h3>
+          <h3 className="mt-2 text-3xl font-bold text-white">{value}</h3>
         </div>
 
         <div
@@ -743,6 +746,3 @@ function StatusCard({
     </div>
   );
 }
-
-
-
