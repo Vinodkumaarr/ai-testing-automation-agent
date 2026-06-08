@@ -8,11 +8,14 @@ import { TestCase } from "./UserRepoList";
 
 type Props = {
   testCases: TestCase[];
-  onReload: any;
+  onReload: any,
+  repository:any;
 };
 
-function TestCaseList({ testCases, onReload }: Props) {
+function TestCaseList({ testCases, onReload , repository}: Props) {
+
   const [selectedTestCases, setSelectedTestCases] = useState<TestCase[]>([]);
+  const [isModelOpen, setIsModelOpen] = useState(false);
 
   const handleSelectedTestCase = (
     checked: boolean | string,
@@ -25,8 +28,9 @@ function TestCaseList({ testCases, onReload }: Props) {
         prev.filter((item: any) => item.id !== testCase.id),
       );
     }
-  };
-  
+};
+
+   
   return (
     <div className="space-y-5">
       {/* Header */}
@@ -49,7 +53,8 @@ function TestCaseList({ testCases, onReload }: Props) {
       <div className="overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-[#0B1120] via-[#111827] to-[#050816] shadow-xl backdrop-blur-2xl">
         {testCases.map((testCase, index) => (
         <div
-            key={testCase.id || index}
+            key = {index}
+            // key={testCase.id || index}
             className="group flex items-center justify-between border-b border-white/10 p-5 transition-all duration-300 hover:bg-white/[0.03]"
         >
             {/* Left Side */}
@@ -78,9 +83,19 @@ function TestCaseList({ testCases, onReload }: Props) {
                 {testCase?.type}
               </Badge>
 
-              <Badge className="border border-amber-400/20 bg-amber-500/10 text-amber-300 hover:bg-amber-500/20">
-                Pending
-              </Badge>
+              {/* {testCase?.status == 'failed' && 
+              <Badge variant={'destructive'} className="border border-amber-400/20 bg-amber-500/10 text-amber-300 hover:bg-amber-500/20">
+                {testCase?.status}
+              </Badge>}
+              {testCase?.status == 'passed' && 
+              <Badge variant={'default'} className="border border-green-400/20 bg-green-500/10 text-green-300 hover:bg-green-500/20">
+                {testCase?.status}
+              </Badge>}
+              {testCase?.status == 'running' && 
+              <Badge variant={'default'} className="border border-gray-400/20 bg-gray-500/10 text-gray-300 hover:bg-gray-500/20">
+                {testCase?.status}
+              </Badge>} */}
+              <Badge variant={"secondary"}>Pending</Badge>
               <TestCaseSettingDialog testCase={testCase} setReload={onReload} />
               </div>
             </div>
@@ -100,11 +115,11 @@ function TestCaseList({ testCases, onReload }: Props) {
           </div>
 
           <Button
-            disabled={selectedTestCases?.length == 0}
+            disabled={selectedTestCases?.length == 0} onClick={()=> setIsModelOpen(true)}
             className="group rounded-2xl border border-indigo-400/20 bg-gradient-to-r from-indigo-600 via-violet-600 to-cyan-600 px-6 text-white shadow-lg shadow-indigo-500/20 transition-all duration-300 hover:scale-105 hover:shadow-indigo-500/40 disabled:cursor-not-allowed disabled:opacity-50"
           >
             <Play className="mr-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-            Run Selected
+            Run
           </Button>
         </div>
       </div>
@@ -113,3 +128,4 @@ function TestCaseList({ testCases, onReload }: Props) {
 }
 
 export default TestCaseList;
+

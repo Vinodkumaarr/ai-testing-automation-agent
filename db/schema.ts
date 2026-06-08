@@ -62,8 +62,11 @@ export const TestCasesTable = pgTable("test_cases", {
 
   // Timestamps
   createdAt: timestamp("created_at").defaultNow(),
-});
 
+  logs:jsonb("logs").$type<string[]>().default([]),
+  sessionId:varchar("session_id", {length:255}),
+  sessionUrl:varchar("session_url", {length:500}),
+});
 
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;

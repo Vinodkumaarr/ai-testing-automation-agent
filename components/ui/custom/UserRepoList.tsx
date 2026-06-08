@@ -1,419 +1,3 @@
-// import {
-//     Accordion,
-//     AccordionContent,
-//     AccordionItem,
-//     AccordionTrigger,
-// } from "@/components/ui/accordion";
-// import Image from "next/image";
-// import { UserRepo } from './WorkspaceBody';
-
-// type props = {
-//     repoList:UserRepo[]
-
-// }
-
-// function UserRepoList({repoList}:props) {
-//   return (
-//     <div>
-//         {repoList.map((repo,index)=>(
-//             <Accordion type="single" collapsible defaultValue="item-1" key={index}>
-//                <AccordionItem value="item-1" className='border px-5 rounded-xl'>
-//                    <AccordionTrigger>
-//                      <div className='flex items-center gap-5'>
-//                         <Image src={'/github.png'} alt="GitHub" width={30} height={30} />
-//                         <div className='flex flex-col items-start gap-1'>
-//                             <h2 >{repo.fullName}</h2>
-//                             <p className='text-sm text-gray-400'>
-//                                 {repo.defaultBranch} * {repo.language}
-//                             </p>
-//                         </div>
-//                      </div>
-//                    </AccordionTrigger>
-//                       <AccordionContent>
-//                        Yes. It adheres to the WAI-ARIA design pattern.
-//                       </AccordionContent>
-//                 </AccordionItem>
-//             </Accordion>
-//         ))}
-//     </div>
-//   )
-// }
-
-// export default UserRepoList
-
-// import {
-//   Accordion,
-//   AccordionContent,
-//   AccordionItem,
-//   AccordionTrigger,
-// } from "@/components/ui/accordion";
-
-// import Image from "next/image";
-
-// import { UserDetailContext } from "@/context/UserDetailContext";
-// import axios from "axios";
-// import { CheckCircle2, ListChecks, Loader2, Sparkles, TrendingUp, XCircle } from "lucide-react";
-// import { useContext, useState } from "react";
-// import { Button } from "../button";
-// import { UserRepo } from "./WorkspaceBody";
-
-// type Props = {
-//   repoList: UserRepo[];
-// };
-
-// function UserRepoList({ repoList }: Props) {
-//     const totalTests = 120;
-//     const passedTests = 95;
-//     const failedTests = 25;
-//     const passRate = totalTests > 0
-//         ? Math.round((passedTests / totalTests) * 100)
-//         : 0;
-
-//         const {userDetail} = useContext(UserDetailContext);
-//     const [loading,setLoading] = useState(false);
-
-//     const handleGenerateTestCase = async(repo:UserRepo) => {
-//       setLoading(true);
-//       const result = await axios.post('/api/generate-test-cases',{
-//         userId:userDetail?.id,
-//         repoId:repo?.repoId,
-//         owner:repo.owner,
-//         repo:repo.name,
-//         branch:repo.defaultBranch
-
-//       })
-//       console.log(result.data);
-//       setLoading(false);
-
-//     }
-
-//   return (
-//     <div className="space-y-4">
-//       <h2 className='my-3 font-medium'>REPOSITORIES</h2>
-//       {repoList.map((repo) => (
-//         <Accordion
-//           type="single"
-//           collapsible
-//           key={repo.id}
-//           className="rounded-2xl border border-white/10 bg-[#0B1120] text-white shadow-lg backdrop-blur-xl"
-//         >
-//           <AccordionItem
-//             value={`repo-${repo.id}`}
-//             className="border-none"
-//           >
-//             <AccordionTrigger className="px-5 py-4 hover:no-underline">
-//               <div className="flex items-center gap-4">
-//                 <div className="rounded-xl bg-white p-2 shadow-md">
-//                   <Image
-//                     src="/github.png"
-//                     alt="GitHub"
-//                     width={30}
-//                     height={30}
-//                     className="object-contain"
-//                   />
-//                 </div>
-
-//                 <div className="flex flex-col items-start text-left">
-//                   <h2 className="text-base font-semibold text-white">
-//                     {repo.fullName}
-//                   </h2>
-
-//                   <p className="text-sm text-gray-400">
-//                     {repo.defaultBranch } •
-//                     {repo.language}
-//                   </p>
-//                 </div>
-//               </div>
-//             </AccordionTrigger>
-
-//             <AccordionContent>
-//               <div className="pt-4 space-y-5">
-//                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-//                   <StatusCard
-//                      title="Total Tests"
-//                      value={totalTests}
-//                      icon={<ListChecks className="h-5 w-5 text-blue-600" />}
-//                      bgColor="bg-blue-50"
-//                   />
-//                   <StatusCard
-//                      title="Passed"
-//                      value={passedTests}
-//                      icon={<CheckCircle2 className="h-5 w-5 text-green-600" />}
-//                      bgColor="bg-green-50"
-//                    />
-//                  <StatusCard
-//                     title="Failed"
-//                     value={failedTests}
-//                     icon={<XCircle className="h-5 w-5 text-red-600" />}
-//                     bgColor="bg-red-50"
-//                  />
-//                  <StatusCard
-//                     title="Pass Rate"
-//                     value={`${passRate}%`}
-//                     icon={<TrendingUp className="h-5 w-5 text-purple-600" />}
-//                     bgColor="bg-purple-50"
-//                  />
-//             </div>
-
-//             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border rounded-xl p-4 bg-gray-50">
-//              <div>
-//                <h3 className="font-medium">
-//                 {loading ? 'Generating Test Cases...':
-//                 'Generate AI Test Cases'}
-//                </h3>
-//                <p className="text-sm text-gray-500 mt-1">
-//                 Analyze this repository and generate automated test cases using AI.
-//                </p>
-//              </div>
-
-//             <Button className="gap-2"
-//               disabled={loading}
-//               onClick = {()=>handleGenerateTestCase(repo)}>
-//               {loading ? <Loader2 className='animate-spin' />:
-//             <Sparkles className="h-4 w-4" />}
-//             Generate Test Cases
-//             </Button>
-//            </div>
-//          </div>
-//         </AccordionContent>
-//           </AccordionItem>
-//         </Accordion>
-//       ))}
-//     </div>
-//   );
-// }
-
-// export default UserRepoList;
-
-// function StatusCard({
-//   title,
-//   value,
-//   icon,
-//   bgColor,
-// }: {
-//   title: string;
-//   value: string | number;
-//   icon: React.ReactNode;
-//   bgColor: string;
-// }) {
-//   return (
-//     <div className="border rounded-xl p-4 flex items-center justify-between bg-white">
-//       <div>
-//         <p className="text-sm text-gray-500">{title}</p>
-//         <h3 className="text-2xl font-semibold mt-1">{value}</h3>
-//       </div>
-//       <div className={`h-10 w-10 rounded-full flex items-center justify-center ${bgColor}`}>
-//         {icon}
-//       </div>
-//     </div>
-//   );
-// }
-
-// "use client";
-
-// import {
-//   Accordion,
-//   AccordionContent,
-//   AccordionItem,
-//   AccordionTrigger,
-// } from "@/components/ui/accordion";
-
-// import { UserDetailContext } from "@/context/UserDetailContext";
-// import axios from "axios";
-// import {
-//   CheckCircle2,
-//   ListChecks,
-//   Loader2,
-//   Sparkles,
-//   TrendingUp,
-//   XCircle,
-// } from "lucide-react";
-// import Image from "next/image";
-// import { useContext, useState } from "react";
-// import { Button } from "../button";
-// import { UserRepo } from "./WorkspaceBody";
-
-// type Props = {
-//   repoList: UserRepo[];
-// };
-
-// function UserRepoList({ repoList }: Props) {
-//   const { userDetail } = useContext(UserDetailContext);
-
-//   const [loadingRepoId, setLoadingRepoId] = useState<number | null>(null);
-
-//   const totalTests = 0;
-//   const passedTests = 0;
-//   const failedTests = 0;
-//   const passRate =
-//     totalTests > 0 ? Math.round((passedTests / totalTests) * 100) : 0;
-
-//   const handleGenerateTestCase = async (repo: UserRepo) => {
-//     try {
-//       setLoadingRepoId(repo.id);
-
-//       const payload = {
-//         userId: userDetail?.id,
-//         repoId: repo.repoId,
-//         owner: repo.owner,
-//         repo: repo.name,
-//         branch: repo.defaultBranch || "main",
-//       };
-
-//       console.log("Sending Payload:", payload);
-
-//       const result = await axios.post(
-//         "/api/generate-test-cases",
-//         payload
-//       );
-
-//       console.log("Generated Test Cases:", result.data);
-//     } catch (error: any) {
-//       console.error(
-//         "Generate Test Case Error:",
-//         error?.response?.data || error.message
-//       );
-//     } finally {
-//       setLoadingRepoId(null);
-//     }
-//   };
-
-//   return (
-//     <div className="space-y-4">
-//       <h2 className="my-3 font-medium">REPOSITORIES</h2>
-
-//       {repoList.map((repo) => (
-//         <Accordion
-//           key={repo.id}
-//           type="single"
-//           collapsible
-//           className="rounded-2xl border border-white/10 bg-[#0B1120] text-white shadow-lg backdrop-blur-xl"
-//         >
-//           <AccordionItem
-//             value={`repo-${repo.id}`}
-//             className="border-none"
-//           >
-//             <AccordionTrigger className="px-5 py-4 hover:no-underline">
-//               <div className="flex items-center gap-4">
-//                 <div className="rounded-xl bg-white p-2 shadow-md">
-//                   <Image
-//                     src="/github.png"
-//                     alt="GitHub"
-//                     width={30}
-//                     height={30}
-//                   />
-//                 </div>
-
-//                 <div className="flex flex-col items-start text-left">
-//                   <h2 className="text-base font-semibold text-white">
-//                     {repo.fullName}
-//                   </h2>
-
-//                   <p className="text-sm text-gray-400">
-//                     {repo.defaultBranch || "main"} •{" "}
-//                     {repo.language || "Unknown"}
-//                   </p>
-//                 </div>
-//               </div>
-//             </AccordionTrigger>
-
-//             <AccordionContent>
-//               <div className="pt-4 space-y-5">
-//                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-//                   <StatusCard
-//                     title="Total Tests"
-//                     value={totalTests}
-//                     icon={<ListChecks className="h-5 w-5 text-blue-600" />}
-//                     bgColor="bg-blue-50"
-//                   />
-
-//                   <StatusCard
-//                     title="Passed"
-//                     value={passedTests}
-//                     icon={<CheckCircle2 className="h-5 w-5 text-green-600" />}
-//                     bgColor="bg-green-50"
-//                   />
-
-//                   <StatusCard
-//                     title="Failed"
-//                     value={failedTests}
-//                     icon={<XCircle className="h-5 w-5 text-red-600" />}
-//                     bgColor="bg-red-50"
-//                   />
-
-//                   <StatusCard
-//                     title="Pass Rate"
-//                     value={`${passRate}%`}
-//                     icon={<TrendingUp className="h-5 w-5 text-purple-600" />}
-//                     bgColor="bg-purple-50"
-//                   />
-//                 </div>
-
-//                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border rounded-xl p-4 bg-gray-50">
-//                   <div>
-//                     <h3 className="font-medium text-black">
-//                       {loadingRepoId === repo.id
-//                         ? "Generating Test Cases..."
-//                         : "Generate AI Test Cases"}
-//                     </h3>
-
-//                     <p className="text-sm text-gray-500 mt-1">
-//                       Analyze this repository and generate automated test
-//                       cases using AI.
-//                     </p>
-//                   </div>
-
-//                   <Button
-//                     className="gap-2"
-//                     disabled={loadingRepoId === repo.id}
-//                     onClick={() => handleGenerateTestCase(repo)}
-//                   >
-//                     {loadingRepoId === repo.id ? (
-//                       <Loader2 className="animate-spin" />
-//                     ) : (
-//                       <Sparkles className="h-4 w-4" />
-//                     )}
-
-//                     Generate Test Cases
-//                   </Button>
-//                 </div>
-//               </div>
-//             </AccordionContent>
-//           </AccordionItem>
-//         </Accordion>
-//       ))}
-//     </div>
-//   );
-// }
-
-// export default UserRepoList;
-
-// function StatusCard({
-//   title,
-//   value,
-//   icon,
-//   bgColor,
-// }: {
-//   title: string;
-//   value: string | number;
-//   icon: React.ReactNode;
-//   bgColor: string;
-// }) {
-//   return (
-//     <div className="border rounded-xl p-4 flex items-center justify-between bg-white">
-//       <div>
-//         <p className="text-sm text-gray-500">{title}</p>
-//         <h3 className="text-2xl font-semibold mt-1 text-black">{value}</h3>
-//       </div>
-
-//       <div
-//         className={`h-10 w-10 rounded-full flex items-center justify-center ${bgColor}`}
-//       >
-//         {icon}
-//       </div>
-//     </div>
-//   );
-// }
 
 "use client";
 
@@ -462,6 +46,7 @@ export type TestCase = {
   repoName: string;
   repoOwner: string;
   targetRoute: string;
+  status:string;
 };
 
 type StatusData = {
@@ -477,7 +62,6 @@ function UserRepoList({ repoList, setReload }: Props) {
   const [loadingRepoId, setLoadingRepoId] = useState<number | null>(null);
   const [testCases, setTestCases] = useState<TestCase[]>([]);
   
-
   const [statusData, setStatusData] = useState<StatusData>({
     totalTests: 0,
     passedTests: 0,
@@ -495,6 +79,7 @@ function UserRepoList({ repoList, setReload }: Props) {
         owner: repo.owner,
         repo: repo.name,
         branch: repo.defaultBranch || "main",
+      
       };
 
       console.log("Sending Payload:", payload);
@@ -518,11 +103,17 @@ function UserRepoList({ repoList, setReload }: Props) {
     const result = await axios.get(`/api/test-cases?repoId=${repoId}`);
     console.log(result.data);
 
+    const userTestCases = result.data as TestCase[];
+    const passedTests = userTestCases?.filter((test) => test.status === "passed").length || 0;
+    const failedTests = userTestCases?.filter((test) => test.status === "failed").length || 0;
+    const passRate = userTestCases?.length > 0 ? Math.round((passedTests / userTestCases.length) * 100) : 0;
+
+
     setStatusData({
       totalTests: result.data.length,
-      passedTests: 0,
-      failedTests: 0,
-      passRate: 0,
+      passedTests: passedTests,
+      failedTests: failedTests,
+      passRate: passRate,
     });
 
     setTestCases(result.data);
@@ -651,7 +242,9 @@ function UserRepoList({ repoList, setReload }: Props) {
                 {!testCaseLoading && testCases.length > 0 && (
                   <TestCaseList
                     testCases={testCases}
+                    repository={repo}
                     onReload={(repoId: number) => GetTestCases(repoId)}
+
                   />
                 )}
 
