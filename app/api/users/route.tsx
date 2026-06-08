@@ -27,7 +27,7 @@ export async function POST(req:NextRequest) {
 
     }
     catch(e){
-        console.log("Erorr Creating User:",e)
+        console.log("Error Creating User:",e)
         return NextResponse.json({error:"Failed to create new user"},{status:500})
 
     }

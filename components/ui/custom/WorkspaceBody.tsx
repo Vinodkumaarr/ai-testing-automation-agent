@@ -1,71 +1,26 @@
-// "use client";
-
-// import { UserDetailContext } from "@/context/UserDetailContext";
-// import Image from "next/image";
-// import React, { useContext } from "react";
-// import { Button } from "../button";
-// import { Card } from "../card";
-
-
-// function WorkspaceBody() {
-//   const { userDetail } = useContext(UserDetailContext);
-
-//   return (
-//     <>
-      
-//       {/* Left Section */}
-//       <div className='flex justify-between items-center'>
-//         <h2 className="text-4xl font-semibold text-gray-800">
-//           Workspace
-//         </h2>
-//         <h2 className="rounded-lg bg-blue-100 px-4 py-2 text-sm font-medium text-blue-800">
-//           Remaining Credits: {userDetail?.credits ?? 0}
-//         </h2>
-//       </div>
-        
-//     <div>
-//       {/* Right Section */}
-//       <Card className="mt-5 flex items-center gap-4">
-        
-//         <div className="flex items-center gap-5 transition hover:shadow-md">
-//           <Image
-//             src="/github.png"
-//             alt="GitHub"
-//             width={40}
-//             height={40}
-//             className="object-contain"
-//           />
-//           <h2>Connect GitHub & Add Repository</h2>
-//         </div>
-//         <div>
-//             <Button>Install</Button>
-//         </div>
-//       </Card>
-//     </div>
-//   );
-// }
-
-// export default WorkspaceBody;
 
 "use client";
-
 import { UserDetailContext } from "@/context/UserDetailContext";
-import Image from "next/image";
-import React, { useContext } from "react";
-import { Button } from "../button";
-import { Card, CardContent } from "../card";
 import {
+  ArrowRight,
   Github,
   Sparkles,
-  ArrowRight,
 } from "lucide-react";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import React, { useContext, useEffect, useState } from "react";
+import { Button } from "../button";
+import { CardContent } from "../card";
 
+import axios from "axios";
 import {
   motion,
   useMotionTemplate,
   useMotionValue,
 } from "framer-motion";
 import EmptyWorkspace from "./EmptyWorkspace";
+import RepoDialog from "./RepoDialog";
+import UserRepoList from "./UserRepoList";
 
 /* =========================
    Interactive Card
@@ -134,9 +89,57 @@ function GlowCard({
    Main Component
 ========================= */
 
+export type UserRepo = {
+  id: number;
+  repoId: number;
+  name: string;
+  fullName: string;
+  private: boolean;
+  htmlUrl: string;
+  description: string;
+  userId: number;
+  owner: string;
+  updatedAt:string,
+  language:string,
+  defaultBranch: string;
+  targetDomain?:string,
+  globalInstruction?:string,
+}
+
 function WorkspaceBody() {
-  const { userDetail } =
-    useContext(UserDetailContext);
+
+
+  const { userDetail } = useContext(UserDetailContext);
+  const router = useRouter();
+  const [token,setToken] = useState('')
+  const [userRepoList,setUserRepoList] = useState<UserRepo[]>([]);
+  
+
+
+  useEffect(()=>{
+    GetGithubUserToken();
+    
+  },[])
+
+  useEffect(()=>{
+    userDetail && GetUserAddRepoList();
+  },[ userDetail])
+
+  const GetGithubUserToken= async ()=>{
+    const result = await axios.get("/api/github/token");
+    console.log(result.data.token);
+    setToken(result.data.token);
+  }
+  
+  const OnAddRepo=async ()=>{
+    router.push("/api/github")
+  }
+
+  const GetUserAddRepoList = async () =>{
+    const result = await axios.get("/api/user-repo?userId="+userDetail?.id);
+    console.log("User Added Repo List:",result.data);
+    setUserRepoList(result.data);
+  }
 
   return (
     <div className="space-y-6">
@@ -219,19 +222,23 @@ function WorkspaceBody() {
           </div>
 
           {/* Button */}
-          <Button className="group rounded-2xl border border-indigo-400/20 bg-gradient-to-r from-indigo-600 to-violet-700 px-7 py-6 text-white shadow-lg shadow-indigo-500/20 transition-all duration-300 hover:scale-105 hover:shadow-indigo-500/40">
+          {!token ? <Button onClick={OnAddRepo} className="group rounded-2xl border border-indigo-400/20 bg-gradient-to-r from-indigo-600 to-violet-700 px-7 py-6 text-white shadow-lg shadow-indigo-500/20 transition-all duration-300 hover:scale-105 hover:shadow-indigo-500/40">
             <span className="flex items-center gap-2">
-              Install Now
+              Setup
 
               <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
             </span>
           </Button>
+             : <RepoDialog setRefreshPage={(refresh:boolean)=>GetUserAddRepoList()} />
+             
+          }
         </div>
       </GlowCard>
 
       <GlowCard className="p-6">
         <CardContent>
-            <EmptyWorkspace />
+            {!userRepoList ? <EmptyWorkspace />
+               : <UserRepoList repoList={userRepoList} setReload={() => GetUserAddRepoList()} /> }
         </CardContent>
       </GlowCard>
 
