@@ -1,10 +1,10 @@
 import { ClerkProvider } from '@clerk/nextjs';
-import "./globals.css";
 import type { Metadata } from "next";
+import "./globals.css";
 import Provider from './provider';
 
 export const metadata: Metadata = {
-  title: "AI Testing Automation app",
+  title: "TestNexus",
   description: "Created using the ultimate interactive Next.js stack generator CLI.",
 };
 

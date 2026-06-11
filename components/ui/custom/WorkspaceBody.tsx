@@ -1,11 +1,6 @@
-
 "use client";
 import { UserDetailContext } from "@/context/UserDetailContext";
-import {
-  ArrowRight,
-  Github,
-  Sparkles,
-} from "lucide-react";
+import { ArrowRight, Globe, Sparkles } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React, { useContext, useEffect, useState } from "react";
@@ -13,11 +8,7 @@ import { Button } from "../button";
 import { CardContent } from "../card";
 
 import axios from "axios";
-import {
-  motion,
-  useMotionTemplate,
-  useMotionValue,
-} from "framer-motion";
+import { motion, useMotionTemplate, useMotionValue } from "framer-motion";
 import EmptyWorkspace from "./EmptyWorkspace";
 import RepoDialog from "./RepoDialog";
 import UserRepoList from "./UserRepoList";
@@ -36,11 +27,8 @@ function GlowCard({
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
 
-  function handleMouseMove(
-    e: React.MouseEvent<HTMLDivElement>
-  ) {
-    const rect =
-      e.currentTarget.getBoundingClientRect();
+  function handleMouseMove(e: React.MouseEvent<HTMLDivElement>) {
+    const rect = e.currentTarget.getBoundingClientRect();
 
     mouseX.set(e.clientX - rect.left);
     mouseY.set(e.clientY - rect.top);
@@ -78,9 +66,7 @@ function GlowCard({
       <div className="absolute inset-0 rounded-3xl border border-transparent group-hover:border-indigo-400/30 transition duration-300" />
 
       {/* Content */}
-      <div className="relative z-10">
-        {children}
-      </div>
+      <div className="relative z-10">{children}</div>
     </motion.div>
   );
 }
@@ -99,47 +85,42 @@ export type UserRepo = {
   description: string;
   userId: number;
   owner: string;
-  updatedAt:string,
-  language:string,
+  updatedAt: string;
+  language: string;
   defaultBranch: string;
-  targetDomain?:string,
-  globalInstruction?:string,
-}
+  targetDomain?: string;
+  globalInstruction?: string;
+};
 
 function WorkspaceBody() {
-
-
   const { userDetail } = useContext(UserDetailContext);
   const router = useRouter();
-  const [token,setToken] = useState('')
-  const [userRepoList,setUserRepoList] = useState<UserRepo[]>([]);
-  
+  const [token, setToken] = useState("");
+  const [userRepoList, setUserRepoList] = useState<UserRepo[]>([]);
 
-
-  useEffect(()=>{
+  useEffect(() => {
     GetGithubUserToken();
-    
-  },[])
+  }, []);
 
-  useEffect(()=>{
+  useEffect(() => {
     userDetail && GetUserAddRepoList();
-  },[ userDetail])
+  }, [userDetail]);
 
-  const GetGithubUserToken= async ()=>{
+  const GetGithubUserToken = async () => {
     const result = await axios.get("/api/github/token");
     console.log(result.data.token);
     setToken(result.data.token);
-  }
-  
-  const OnAddRepo=async ()=>{
-    router.push("/api/github")
-  }
+  };
 
-  const GetUserAddRepoList = async () =>{
-    const result = await axios.get("/api/user-repo?userId="+userDetail?.id);
-    console.log("User Added Repo List:",result.data);
+  const OnAddRepo = async () => {
+    router.push("/api/github");
+  };
+
+  const GetUserAddRepoList = async () => {
+    const result = await axios.get("/api/user-repo?userId=" + userDetail?.id);
+    console.log("User Added Repo List:", result.data);
     setUserRepoList(result.data);
-  }
+  };
 
   return (
     <div className="space-y-6">
@@ -147,7 +128,6 @@ function WorkspaceBody() {
 
       <GlowCard className="p-6">
         <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
-          
           {/* Left */}
           <div>
             <h2 className="bg-gradient-to-r from-indigo-400 via-violet-400 to-white bg-clip-text text-4xl font-bold text-transparent">
@@ -155,9 +135,8 @@ function WorkspaceBody() {
             </h2>
 
             <p className="mt-2 max-w-xl text-sm text-gray-400">
-              Manage repositories, automate testing
-              workflows, and monitor AI-powered QA
-              pipelines with intelligent automation.
+              Manage repositories, automate testing workflows, and monitor
+              AI-powered QA pipelines with intelligent automation.
             </p>
           </div>
 
@@ -166,9 +145,7 @@ function WorkspaceBody() {
             <Sparkles className="h-5 w-5 text-indigo-400" />
 
             <div>
-              <p className="text-xs text-gray-400">
-                Remaining Credits
-              </p>
+              <p className="text-xs text-gray-400">Remaining Credits</p>
 
               <h2 className="text-xl font-bold text-indigo-300">
                 {userDetail?.credits ?? 0}
@@ -182,10 +159,8 @@ function WorkspaceBody() {
 
       <GlowCard className="p-6">
         <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
-          
           {/* Left Content */}
           <div className="flex items-center gap-5">
-            
             {/* Logo */}
             <motion.div
               whileHover={{
@@ -200,45 +175,53 @@ function WorkspaceBody() {
                 width={50}
                 height={50}
                 className="object-contain"
-                
               />
             </motion.div>
 
             {/* Text */}
             <div>
               <h2 className="flex items-center gap-2 text-2xl font-semibold text-white">
-                <Github className="h-6 w-6 text-indigo-400" />
-
+                <Globe className="h-6 w-6 text-indigo-400" />
                 Connect GitHub
               </h2>
 
               <p className="mt-2 max-w-lg text-sm leading-relaxed text-gray-400">
-                Connect your GitHub repositories to
-                automatically generate AI-powered
-                testing workflows, regression tests,
-                and deployment validation.
+                Connect your GitHub repositories to automatically generate
+                AI-powered testing workflows, regression tests, and deployment
+                validation.
               </p>
             </div>
           </div>
 
           {/* Button */}
-          {!token ? <Button onClick={OnAddRepo} className="group rounded-2xl border border-indigo-400/20 bg-gradient-to-r from-indigo-600 to-violet-700 px-7 py-6 text-white shadow-lg shadow-indigo-500/20 transition-all duration-300 hover:scale-105 hover:shadow-indigo-500/40">
-            <span className="flex items-center gap-2">
-              Setup
-
-              <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-            </span>
-          </Button>
-             : <RepoDialog setRefreshPage={(refresh:boolean)=>GetUserAddRepoList()} />
-             
-          }
+          {!token ? (
+            <Button
+              onClick={OnAddRepo}
+              className="group rounded-2xl border border-indigo-400/20 bg-gradient-to-r from-indigo-600 to-violet-700 px-7 py-6 text-white shadow-lg shadow-indigo-500/20 transition-all duration-300 hover:scale-105 hover:shadow-indigo-500/40"
+            >
+              <span className="flex items-center gap-2">
+                Setup
+                <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+              </span>
+            </Button>
+          ) : (
+            <RepoDialog
+              setRefreshPage={(refresh: boolean) => GetUserAddRepoList()}
+            />
+          )}
         </div>
       </GlowCard>
 
       <GlowCard className="p-6">
         <CardContent>
-            {!userRepoList ? <EmptyWorkspace />
-               : <UserRepoList repoList={userRepoList} setReload={() => GetUserAddRepoList()} /> }
+          {!userRepoList ? (
+            <EmptyWorkspace />
+          ) : (
+            <UserRepoList
+              repoList={userRepoList}
+              setReload={() => GetUserAddRepoList()}
+            />
+          )}
         </CardContent>
       </GlowCard>
 
@@ -280,4 +263,3 @@ function WorkspaceBody() {
 }
 
 export default WorkspaceBody;
-

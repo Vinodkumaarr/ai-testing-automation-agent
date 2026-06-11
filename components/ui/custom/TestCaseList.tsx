@@ -80,10 +80,9 @@ function TestCaseList({ testCases, onReload , repository}: Props) {
             {/* Right Side */}
             <div className="flex items-center gap-3">
               <Badge className="border border-cyan-400/20 bg-cyan-500/10 text-cyan-300 hover:bg-cyan-500/20">
-                {testCase?.type}
+                {testCase?.type || "No Type"}
               </Badge>
-
-              {/* {testCase?.status == 'failed' && 
+              {testCase?.status == 'failed' && 
               <Badge variant={'destructive'} className="border border-amber-400/20 bg-amber-500/10 text-amber-300 hover:bg-amber-500/20">
                 {testCase?.status}
               </Badge>}
@@ -94,8 +93,8 @@ function TestCaseList({ testCases, onReload , repository}: Props) {
               {testCase?.status == 'running' && 
               <Badge variant={'default'} className="border border-gray-400/20 bg-gray-500/10 text-gray-300 hover:bg-gray-500/20">
                 {testCase?.status}
-              </Badge>} */}
-              <Badge variant={"secondary"}>Pending</Badge>
+              </Badge>}
+
               <TestCaseSettingDialog testCase={testCase} setReload={onReload} />
               </div>
             </div>

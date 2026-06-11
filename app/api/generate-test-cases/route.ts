@@ -15,7 +15,7 @@ const IMPORTANT_FILES = [
   "package.json",
   "next.config",
   "middleware",
-  "app/",
+  "app/", 
   "pages/",
   "components/",
   "src/",
